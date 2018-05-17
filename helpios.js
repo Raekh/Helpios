@@ -96,12 +96,12 @@ function createTooltips() {
         }
 	}
 
-	$.post("http://127.0.0.1/index.php",
+	$.post("http://127.0.0.1:8888/index.php",
     {
         request: "getTooltips",
         url: "http://127.0.0.1/index.html"
     },
-    function(data, status){
+    function(json, status){
 		$.each(JSON.parse(json), function(idx, obj) {
 			console.log('#'+obj.baliseTooltip, obj.titreTooltip, obj.descriptionTooltip);
 			$('#'+obj.baliseTooltip).popover({ placement:'auto', trigger: 'click', title: obj.titreTooltip, content: obj.descriptionTooltip });
