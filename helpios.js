@@ -3,23 +3,23 @@ var testStats = 0;
 var myChart;
 
 function createBtnHelp(){
-	var css = ".float{position:fixed;width:80px;height:80px;bottom:80px;right:80px;line-height: 5rem;border: solid 1px #ffffff;color:#FFF;border-radius:80px;text-align:center;z-index: 99999}.modal{z-index: 99999 !important;display:none;position:fixed;z-index:1;padding-top:100px;left:0;top:0;width:100%;height:100%;overflow:auto;background-color:#000;background-color:rgba(0,0,0,.4)}.modal-content{background-color:#fefefe;margin:auto;padding:20px;border:1px solid #888;width:80%;color:black;z-index: 99999 !important}.close{color:#aaa;float:right;font-size:28px;font-weight:700;z-index: 99998 !important}.close:focus,.close:hover{color:#000;text-decoration:none;cursor:pointer}";
-	var htmlDiv = document.createElement('div');
-	htmlDiv.innerHTML = '<style>' + css + '</style>';
-	document.head.appendChild(htmlDiv);
+	var css = ".float{position:fixed;width:80px;height:80px;bottom:80px;right:80px;line-height: 5rem;border: solid 1px #ffffff;color:#FFF;border-radius:80px;text-align:center;z-index: 99999}.modal{z-index: 99999 !important;display:none;position:fixed;z-index:1;padding-top:100px;left:0;top:0;width:100%;height:100%;overflow:auto;background-color:#000;background-color:rgba(0,0,0,.4)}.modal-content{background-color:#fefefe;margin:auto;padding:20px;border:1px solid #888;width:80%;color:black;z-index: 99999 !important}.closeModal{color:#aaa;float:right;font-size:28px;font-weight:700;z-index: 99998 !important}.closeModal:focus,.closeModal:hover{color:#000;text-decoration:none;cursor:pointer}.popover{position:absolute;top:0;left:0;z-index:1060;display:none;max-width:276px;padding:1px;font-family:\"Helvetica Neue\",Helvetica,Arial,sans-serif;font-size:14px;font-style:normal;font-weight:400;line-height:1.42857143;text-align:left;text-align:start;text-decoration:none;text-shadow:none;text-transform:none;letter-spacing:normal;word-break:normal;word-spacing:normal;word-wrap:normal;white-space:normal;background-color:#fff;-webkit-background-clip:padding-box;background-clip:padding-box;border:1px solid #ccc;border:1px solid rgba(0,0,0,.2);border-radius:6px;-webkit-box-shadow:0 5px 10px rgba(0,0,0,.2);box-shadow:0 5px 10px rgba(0,0,0,.2);line-break:auto}";
+    var htmlDiv = document.createElement('div');
+    htmlDiv.innerHTML = '<style>' + css + '</style>';
+    document.head.appendChild(htmlDiv);
 
-	var button = document.createElement("button");
-	button.innerHTML = "Help";
-	button.id = "initPopup";
-	button.className = "float";
-	button.addEventListener("click",initPopup);
-	document.body.appendChild(button);
+    var button = document.createElement("button");
+    button.innerHTML = "Help";
+    button.id = "initPopup";
+    button.className = "float";
+    button.addEventListener("click",initPopup);
+    document.body.appendChild(button);
 
-	var button = document.createElement("div");
-	button.innerHTML = '<div class="modal-content"><span class="close">&times;</span><p>Some text in the Modal..</p></div>';
-	button.id = "myModal";
-	button.className = "modal";
-	document.body.appendChild(button);
+    var button = document.createElement("div");
+    button.innerHTML = '<div class="modal-content"><span class="closeModal">&times;</span><p>Quel aide souhaitez-vous ?<br><nav><ul><li><a href="#contact2">Sans aide (Auto activation)</a></li><li><a href="#contact">Aide détaillée</a></li><li><a href="#about">Scenario</a></li></ul></nav></p></div>';
+    button.id = "myModal";
+    button.className = "modal";
+    document.body.appendChild(button);
 
 	var chartbar = document.createElement("canvas");
 	chartbar.id="barChart1";
@@ -34,7 +34,6 @@ function createBtnHelp(){
 
 	createTooltips();
 	createBarChart();
-
 }
 
 function upStat(){
@@ -57,67 +56,47 @@ function initPopup(){
 	var modal = document.getElementById('myModal');
 	modal.style.display = "block";
 
-	var span = document.getElementsByClassName("close")[0];
-	console.log("ici" + span);
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function() {
-    	console.log("close");
-    	modal.style.display = "none";
-    }
 
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-    	if (event.target == modal) {
-    		modal.style.display = "none";
-    	}
+    var span = document.getElementsByClassName("closeModal")[0];
+    span.addEventListener("click", function() {
+        console.log("close");
+        modal.style.display = "none";
+    });
+
+    var aElement = span.getElementsByTagName("a");
+    for (var i = 0; i < aElement.length; i++) {
+        aElement[i].addEventListener("click", function() {
+            console.log("close");
+            modal.style.display = "none";
+        });
     }
 }
 
 function createTooltips() {
-	console.log("tentative de création tooltip")
-	var bns = document.getElementsByTagName("button");
-	for (i = 0; i < bns.length; i++) {
-		if(bns[i].id != ""){
-			bns[i].className += " helpiostooltip";
-			console.log(bns[i].id);
-			$("#"+bns[i].id).popover();
-		}
-	}
 
-	var inputs = document.getElementsByTagName("input");
-	for (i = 0; i < inputs.length; i++) {
-		if(inputs[i].id != ""){
-			inputs[i].className += " helpiostooltip";
-			console.log(inputs[i].id);
+    var bns = document.getElementsByTagName("button");
+    for (i = 0; i < bns.length; i++) {
+        if(bns[i].id != ""){
+            $("#"+bns[i].id).popover({ placement:'auto', trigger: 'click', title: 'Twitter Bootstrap Popover', content: "It's so simple to create a tooltop for my website!" });
+        }
+    }
 
-			$('#'+inputs[i].id).popover();
-			console.log(inputs[i].name);
-		}
+    var inputs = document.getElementsByTagName("input");
+    for (i = 0; i < inputs.length; i++) {
+        if(inputs[i].id != ""){
+            $('#'+inputs[i].id).popover({ placement:'auto', trigger: 'click', title: 'Twitter Bootstrap Popover', content: "It's so simple to create a tooltop for my website!" });
+        }
 	}
+	
+	$.post("http://127.0.0.1/index.php",
+    {
+        request: "getTooltips",
+        url: "http://127.0.0.1/index.html"
+    },
+    function(data, status){
+        alert("Data: " + data + "\nStatus: " + status);
+    });
 }
-
-//function $(s) {
-   // return document.querySelector(s)
-//}
-
-
-
-var HelpiosTooltip = function () {
-	function HelpiosTooltip(config) {
-
-		for (var _key in config) {
-			this[_key] = config[_key];
-		}
-	}
-	return HelpiosTooltip;
-}();
-
-var helpiosTooltip = new HelpiosTooltip({
-	id: "id42",
-	options: {},
-	title: "test",
-	content: "Contenu de la tooltip"
-});
 
 function createBarChart() {
 	var ctxB = document.getElementById("barChart1").getContext('2d');
@@ -199,6 +178,3 @@ function createBarChart() {
 		}
 	});
 }
-
-
-
