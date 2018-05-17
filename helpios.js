@@ -77,24 +77,35 @@ function createTooltips() {
     var bns = document.getElementsByTagName("button");
     for (i = 0; i < bns.length; i++) {
         if(bns[i].id != ""){
-            $("#"+bns[i].id).popover({ placement:'auto', trigger: 'click', title: 'Twitter Bootstrap Popover', content: "It's so simple to create a tooltop for my website!" });
+            //$("#"+bns[i].id).popover({ placement:'auto', trigger: 'click', title: 'Twitter Bootstrap Popover', content: "It's so simple to create a tooltop for my website!" });
         }
     }
 
     var inputs = document.getElementsByTagName("input");
     for (i = 0; i < inputs.length; i++) {
         if(inputs[i].id != ""){
-            $('#'+inputs[i].id).popover({ placement:'auto', trigger: 'click', title: 'Twitter Bootstrap Popover', content: "It's so simple to create a tooltop for my website!" });
+            //$('#'+inputs[i].id).popover({ placement:'auto', trigger: 'click', title: 'Twitter Bootstrap Popover', content: "It's so simple to create a tooltop for my website!" });
         }
 	}
 	
+
+    var textareas = document.getElementsByTagName("textarea");
+    for (i = 0; i < textareas.length; i++) {
+        if(textareas[i].id != ""){
+            //$('#'+textareas[i].id).popover({ placement:'auto', trigger: 'click', title: 'Twitter Bootstrap Popover', content: "It's so simple to create a tooltop for my website!" });
+        }
+	}
+
 	$.post("http://127.0.0.1/index.php",
     {
         request: "getTooltips",
         url: "http://127.0.0.1/index.html"
     },
     function(data, status){
-        alert("Data: " + data + "\nStatus: " + status);
+		$.each(JSON.parse(json), function(idx, obj) {
+			console.log('#'+obj.baliseTooltip, obj.titreTooltip, obj.descriptionTooltip);
+			$('#'+obj.baliseTooltip).popover({ placement:'auto', trigger: 'click', title: obj.titreTooltip, content: obj.descriptionTooltip });
+		});
     });
 }
 
