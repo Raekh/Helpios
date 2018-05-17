@@ -1,234 +1,409 @@
-"use strict";
-jQuery(document).ready(function ($) {
+/*
+	Dimension by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+*/
 
-    $(window).load(function () {
-        $(".loaded").fadeOut();
-        $(".preloader").delay(1000).fadeOut("slow");
-    });
-    /*---------------------------------------------*
-     * Mobile menu
-     ---------------------------------------------*/
-    $('.navbar-collapse').find('a[href*=#]:not([href=#])').click(function () {
-        if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
-            var target = $(this.hash);
-            target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
-            if (target.length) {
-                $('html,body').animate({
-                    scrollTop: (target.offset().top - 40)
-                }, 1000);
-                if ($('.navbar-toggle').css('display') != 'none') {
-                    $(this).parents('.container').find(".navbar-toggle").trigger("click");
-                }
-                return false;
-            }
-        }
-    });
+(function($) {
+
+	skel.breakpoints({
+		xlarge:		'(max-width: 1680px)',
+		large:		'(max-width: 1280px)',
+		medium:		'(max-width: 980px)',
+		small:		'(max-width: 736px)',
+		xsmall:		'(max-width: 480px)',
+		xxsmall:	'(max-width: 360px)'
+	});
+
+	$(function() {
+
+		var	$window = $(window),
+			$body = $('body'),
+			$wrapper = $('#wrapper'),
+			$header = $('#header'),
+			$footer = $('#footer'),
+			$main = $('#main'),
+			$main_articles = $main.children('article');
+
+		// Disable animations/transitions until the page has loaded.
+			$body.addClass('is-loading');
+
+			$window.on('load', function() {
+				window.setTimeout(function() {
+					$body.removeClass('is-loading');
+				}, 100);
+			});
+
+		// Fix: Placeholder polyfill.
+			$('form').placeholder();
+
+		// Fix: Flexbox min-height bug on IE.
+			if (skel.vars.IEVersion < 12) {
+
+				var flexboxFixTimeoutId;
+
+				$window.on('resize.flexbox-fix', function() {
+
+					clearTimeout(flexboxFixTimeoutId);
+
+					flexboxFixTimeoutId = setTimeout(function() {
+
+						if ($wrapper.prop('scrollHeight') > $window.height())
+							$wrapper.css('height', 'auto');
+						else
+							$wrapper.css('height', '100vh');
+
+					}, 250);
+
+				}).triggerHandler('resize.flexbox-fix');
+
+			}
+
+		// Nav.
+			var $nav = $header.children('nav'),
+				$nav_li = $nav.find('li');
+
+			// Add "middle" alignment classes if we're dealing with an even number of items.
+				if ($nav_li.length % 2 == 0) {
+
+					$nav.addClass('use-middle');
+					$nav_li.eq( ($nav_li.length / 2) ).addClass('is-middle');
+
+				}
+
+		// Main.
+			var	delay = 325,
+				locked = false;
+
+			// Methods.
+				$main._show = function(id, initial) {
+
+					var $article = $main_articles.filter('#' + id);
+
+					// No such article? Bail.
+						if ($article.length == 0)
+							return;
+
+					// Handle lock.
+
+						// Already locked? Speed through "show" steps w/o delays.
+							if (locked || (typeof initial != 'undefined' && initial === true)) {
+
+								// Mark as switching.
+									$body.addClass('is-switching');
+
+								// Mark as visible.
+									$body.addClass('is-article-visible');
+
+								// Deactivate all articles (just in case one's already active).
+									$main_articles.removeClass('active');
+
+								// Hide header, footer.
+									$header.hide();
+									$footer.hide();
+
+								// Show main, article.
+									$main.show();
+									$article.show();
+
+								// Activate article.
+									$article.addClass('active');
+
+								// Unlock.
+									locked = false;
+
+								// Unmark as switching.
+									setTimeout(function() {
+										$body.removeClass('is-switching');
+									}, (initial ? 1000 : 0));
+
+								return;
+
+							}
+
+						// Lock.
+							locked = true;
+
+					// Article already visible? Just swap articles.
+						if ($body.hasClass('is-article-visible')) {
+
+							// Deactivate current article.
+								var $currentArticle = $main_articles.filter('.active');
+
+								$currentArticle.removeClass('active');
+
+							// Show article.
+								setTimeout(function() {
+
+									// Hide current article.
+										$currentArticle.hide();
+
+									// Show article.
+										$article.show();
+
+									// Activate article.
+										setTimeout(function() {
+
+											$article.addClass('active');
+
+											// Window stuff.
+												$window
+													.scrollTop(0)
+													.triggerHandler('resize.flexbox-fix');
+
+											// Unlock.
+												setTimeout(function() {
+													locked = false;
+												}, delay);
+
+										}, 25);
+
+								}, delay);
+
+						}
+
+					// Otherwise, handle as normal.
+						else {
+
+							// Mark as visible.
+								$body
+									.addClass('is-article-visible');
+
+							// Show article.
+								setTimeout(function() {
+
+									// Hide header, footer.
+										$header.hide();
+										$footer.hide();
+
+									// Show main, article.
+										$main.show();
+										$article.show();
+
+									// Activate article.
+										setTimeout(function() {
+
+											$article.addClass('active');
+
+											// Window stuff.
+												$window
+													.scrollTop(0)
+													.triggerHandler('resize.flexbox-fix');
+
+											// Unlock.
+												setTimeout(function() {
+													locked = false;
+												}, delay);
+
+										}, 25);
+
+								}, delay);
+
+						}
+
+				};
+
+				$main._hide = function(addState) {
+
+					var $article = $main_articles.filter('.active');
+
+					// Article not visible? Bail.
+						if (!$body.hasClass('is-article-visible'))
+							return;
+
+					// Add state?
+						if (typeof addState != 'undefined'
+						&&	addState === true)
+							history.pushState(null, null, '#');
+
+					// Handle lock.
+
+						// Already locked? Speed through "hide" steps w/o delays.
+							if (locked) {
+
+								// Mark as switching.
+									$body.addClass('is-switching');
+
+								// Deactivate article.
+									$article.removeClass('active');
+
+								// Hide article, main.
+									$article.hide();
+									$main.hide();
+
+								// Show footer, header.
+									$footer.show();
+									$header.show();
+
+								// Unmark as visible.
+									$body.removeClass('is-article-visible');
+
+								// Unlock.
+									locked = false;
+
+								// Unmark as switching.
+									$body.removeClass('is-switching');
+
+								// Window stuff.
+									$window
+										.scrollTop(0)
+										.triggerHandler('resize.flexbox-fix');
+
+								return;
+
+							}
+
+						// Lock.
+							locked = true;
+
+					// Deactivate article.
+						$article.removeClass('active');
+
+					// Hide article.
+						setTimeout(function() {
+
+							// Hide article, main.
+								$article.hide();
+								$main.hide();
+
+							// Show footer, header.
+								$footer.show();
+								$header.show();
+
+							// Unmark as visible.
+								setTimeout(function() {
+
+									$body.removeClass('is-article-visible');
+
+									// Window stuff.
+										$window
+											.scrollTop(0)
+											.triggerHandler('resize.flexbox-fix');
+
+									// Unlock.
+										setTimeout(function() {
+											locked = false;
+										}, delay);
+
+								}, 25);
+
+						}, delay);
 
 
-    /*---------------------------------------------*
-     * STICKY scroll
-     ---------------------------------------------*/
+				};
 
-    $.localScroll();
+			// Articles.
+				$main_articles.each(function() {
 
-    /*---------------------------------------------*
-     * WOW
-     ---------------------------------------------*/
+					var $this = $(this);
 
-    var wow = new WOW({
-        mobile: false // trigger animations on mobile devices (default is true)
-    });
-    wow.init();
+					// Close.
+						$('<div class="close">Close</div>')
+							.appendTo($this)
+							.on('click', function() {
+								location.hash = '';
+							});
 
+					// Prevent clicks from inside article from bubbling.
+						$this.on('click', function(event) {
+							event.stopPropagation();
+						});
 
+				});
 
-    /* ---------------------------------------------------------------------
-     Carousel
-     ---------------------------------------------------------------------= */
+			// Events.
+				$body.on('click', function(event) {
 
-    $('.main_home_slider').owlCarousel({
-        responsiveClass: true,
-        autoplay: false,
-        items: 1,
-        loop: true,
-        dots: true,
-        nav: false,
-        navText: [
-            "<i class='lnr lnr-chevron-left'></i>",
-            "<i class='lnr lnr-chevron-right'></i>"
-        ],
-        autoplayHoverPause: true
+					// Article visible? Hide.
+						if ($body.hasClass('is-article-visible'))
+							$main._hide(true);
 
-    });
+				});
 
-    $('.single_features_slide').owlCarousel({
-        responsiveClass: true,
-        autoplay: false,
-        items: 1,
-        loop: true,
-        dots: true,
-        nav: false,
-        navText: [
-            "<i class='lnr lnr-chevron-left'></i>",
-            "<i class='lnr lnr-chevron-right'></i>"
-        ],
-        autoplayHoverPause: true
+				$window.on('keyup', function(event) {
 
-    });
-    $('.main_teastimonial_slider').owlCarousel({
-        responsiveClass: true,
-        autoplay: false,
-        items: 1,
-        loop: true,
-        dots: true,
-        nav: false,
-        navText: [
-            "<i class='lnr lnr-chevron-left'></i>",
-            "<i class='lnr lnr-chevron-right'></i>"
-        ],
-        autoplayHoverPause: true
+					switch (event.keyCode) {
 
-    });
+						case 27:
 
-//fancybox
-    $(".youtube-media").on("click", function (e) {
-        var jWindow = $(window).width();
-        if (jWindow <= 410) {
-            return;
-        }
-        $.fancybox({
-            href: this.href,
-            padding: 4,
-            type: "iframe",
-            'href': this.href.replace(new RegExp("watch\\?v=", "i"), 'v/'),
-        });
-        return false;
-    });
+							// Article visible? Hide.
+								if ($body.hasClass('is-article-visible'))
+									$main._hide(true);
 
+							break;
 
-// magnificPopup
+						default:
+							break;
 
-    $('.portfolio-img').magnificPopup({
-        type: 'image',
-        gallery: {
-            enabled: true
-        },
-    });
+					}
 
-//mytabs
+				});
 
-    $('#myTabs a').click(function (e) {
-        e.preventDefault()
-        $(this).tab('show')
-    })
+				$window.on('hashchange', function(event) {
 
-//skillbar section
+					// Empty hash?
+						if (location.hash == ''
+						||	location.hash == '#') {
 
-    var skillBarTopPos = jQuery('.skillbar').position().top;
-    jQuery(document).scroll(function () {
-        var scrolled_val = $(document).scrollTop().valueOf();
-        if (scrolled_val > skillBarTopPos - 250)
-            startAnimation();
-    });
+							// Prevent default.
+								event.preventDefault();
+								event.stopPropagation();
 
-    function startAnimation() {
-        jQuery('.skillbar').each(function () {
-            jQuery(this).find('.skillbar-bar').animate({
-                width: jQuery(this).attr('data-percent')
-            }, 6000);
-        });
-    }
-    ;
+							// Hide.
+								$main._hide();
 
+						}
 
-//---------------------------------------------
-// Counter 
-//---------------------------------------------
+					// Otherwise, check for a matching article.
+						else if ($main_articles.filter(location.hash).length > 0) {
 
-    $('.statistic-counter').counterUp({
-        delay: 10,
-        time: 2000
-    });
+							// Prevent default.
+								event.preventDefault();
+								event.stopPropagation();
 
-// main-menu-scroll
+							// Show article.
+								$main._show(location.hash.substr(1));
 
-    jQuery(window).scroll(function () {
-        var top = jQuery(document).scrollTop();
-        var height = 300;
-        //alert(batas);
+						}
 
-        if (top > height) {
-            jQuery('.navbar-fixed-top').addClass('menu-scroll');
-        } else {
-            jQuery('.navbar-fixed-top').removeClass('menu-scroll');
-        }
-    });
+				});
 
-// scroll Up
+			// Scroll restoration.
+			// This prevents the page from scrolling back to the top on a hashchange.
+				if ('scrollRestoration' in history)
+					history.scrollRestoration = 'manual';
+				else {
 
-    $(window).scroll(function () {
-        if ($(this).scrollTop() > 600) {
-            $('.scrollup').fadeIn('slow');
-        } else {
-            $('.scrollup').fadeOut('slow');
-        }
-    });
+					var	oldScrollPos = 0,
+						scrollPos = 0,
+						$htmlbody = $('html,body');
 
-    $('.scrollup').click(function () {
-        $("html, body").animate({scrollTop: 0}, 1000);
-        return false;
-    });
+					$window
+						.on('scroll', function() {
 
-//    $('#menu').slicknav();
-    jQuery('#portfoliowork').mixItUp({
-        selectors: {
-            target: '.tile',
-            filter: '.filter',
-            sort: '.sort-btn'
-        },
-        animation: {
-            animateResizeContainer: false,
-            effects: 'fade scale'
-        }
+							oldScrollPos = scrollPos;
+							scrollPos = $htmlbody.scrollTop();
 
-    });
+						})
+						.on('hashchange', function() {
+							$window.scrollTop(oldScrollPos);
+						});
 
+				}
 
-//    $('#mixcontent').mixItUp({
-//        animation: {
-//            animateResizeContainer: false,
-//            effects: 'fade rotateX(-45deg) translateY(-10%)'
-//        }
-//    });
+			// Initialize.
 
-//    $('.dropdown-menu').click(function (e) {
-//        e.stopPropagation();
-//    });
+				// Hide main, articles.
+					$main.hide();
+					$main_articles.hide();
 
-//    $('.grid').masonry({
-//// options
-//        itemSelector: '.grid-item',
-//    });
-//    
+				// Initial article.
+					if (location.hash != ''
+					&&	location.hash != '#')
+						$window.on('load', function() {
+							$main._show(location.hash.substr(1), true);
+						});
 
+	});
 
-    $('.dropdown-menu').click(function (e) {
-        e.stopPropagation();
-    });
-
-    //End
-
-});
-
-
-
-$(document).on("scroll", function () {
-    if ($(document).scrollTop() > 120) {
-        $("nav").addClass("small");
-    } else {
-        $("nav").removeClass("small");
-    }
-});
-
-
-
+})(jQuery);

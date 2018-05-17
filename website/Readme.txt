@@ -1,36 +1,31 @@
-== Theme Name: Logic - Free Html5 Multipurpose Business Template
-
-== Copyright (c) 2016 BootstrapThemes.co
-
-== http://BootstrapThemes.co
+Dimension by HTML5 UP
+html5up.net | @ajlkn
+Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 
 
+This is Dimension, a fun little one-pager with modal-ized (is that a word?) "pages"
+and a cool depth effect (click on a menu item to see what I mean). Simple, fully
+responsive, and kitted out with all the usual pre-styled elements you'd expect.
+Hope you dig it :)
 
-Html Created by: http://bootstrapthemes.co
+Demo images* courtesy of Unsplash, a radtastic collection of CC0 (public domain) images
+you can use for pretty much whatever.
 
+(* = not included)
 
-
-Psd Created by: --Arifuzzaman Sajib-- https://www.behance.net/gallery/31881449/Free-Multipurpose-Business-PSD-Template
-
-
-Rights: 
-You are permitted to use the resources for any number of personal and commercial projects.
-You may modify the resources according to your requirements and include them into works, 
-such as websites, applications or other materials intended for sale. No attribution or 
-link back to this site is required, however any credit will be much appreciated.
-
-
-Prohibitions:
-You do not have the rights to redistribute, resell, lease, license, sublicense or offer 
-files downloaded from http://bootstrapthemes.co to any third party ìas isî or as a separate attachment 
-from any of your work. If you wish to promote my resources on your site, you must link back 
-to the resource page where users can find the download and not directly to the download file.
+AJ
+aj@lkn.io | @ajlkn
 
 
+Credits:
 
-If you would like to share one of my resources, you can do so by making a link to the specific 
-resource on http://bootstrapthemes.co , you can if you wish insert the embed code for the product previews images to illustrate your link. 
-No HOTLINKING is allowed i.e. you cannot make a direct link to the download or/and the images hosted on http://bootstrapthemes.co
+	Demo Images:
+		Unsplash (unsplash.com)
 
-Concerning blog posts, you are free to link to it from any website, 
-but you cannot however publish it as it is, without prior consent from http://bootstrapthemes.co
+	Icons:
+		Font Awesome (fortawesome.github.com/Font-Awesome)
+
+	Other:
+		jQuery (jquery.com)
+		Misc. Sass functions (@HugoGiraudel)
+		Skel (skel.io)
