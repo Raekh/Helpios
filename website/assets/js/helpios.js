@@ -16,7 +16,7 @@ function createBtnHelp(){
     document.body.appendChild(button);
 
     var button = document.createElement("div");
-    button.innerHTML = '<div class="modal-content"><span class="closeModal">&times;</span><p>Quel aide souhaitez-vous ?<br><nav><ul><li><a href="#contact2">Sans aide (Auto activation)</a></li><li><a href="#contact">Aide détaillée</a></li><li><a href="#about">Scenario</a></li></ul></nav></p></div>';
+    button.innerHTML = '<div class="modal-content"><span class="closeModal">&times;</span><p>Quel aide souhaitez-vous ?<br><nav><ul><li><a  class="closeModal2" href="#contact2">Sans aide (Auto activation)</a></li><li><a  class="closeModal2" href="#contact">Aide détaillée</a></li><li><a  class="closeModal2" href="#about">Scenario</a></li></ul></nav></p></div>';
     button.id = "myModal";
     button.className = "modal";
     document.body.appendChild(button);
@@ -34,6 +34,7 @@ function createBtnHelp(){
 
 	createTooltips();
 	createBarChart();
+	listenerAutoScen();
 }
 
 function upStat(){
@@ -51,25 +52,95 @@ function upStat(){
 	});
 
 }
+function listenerAutoScen(){
+	
+    $('#launchScene').click(function() {
+        var lastIndex = 0;
+		scenario(lastIndex);
+    });
+    $('#launchAuto').click(function() {
+    	var lastIndex2 = 0;
+    	console.log("click");
+        if(parseInt($('.counterAuto').text()) > 0){
+	        var interval = setInterval(function() {
+	        	if(parseInt($('.counterAuto').text()) > 0){
+				   $('.counterAuto').text(parseInt($('.counterAuto').text())-1);
+				} else{
+					scenario2(lastIndex2);
+					clearInterval(interval);
+				}
+			}, 1000);
+        }
+	});
+}
+
+function scenario(lastIndex){
+	$('body').append('<button class="float nextTip" style="right:50%;">=></button>')
+	var arrayId = ['#name', '#lastName', '#email', '#numero', '#message2'];
+	var finish = arrayId.length-1;
+
+	console.log(lastIndex);
+
+	popoverFocus(arrayId[lastIndex]);
+	$('.nextTip').click(function(event){
+		event.stopPropagation();
+		lastIndex++;
+		if($('.nextTip').text() != "X"){
+			popoverFocus(arrayId[lastIndex]);
+			if(lastIndex == finish){
+				$('.nextTip').text("X");
+			}
+		}else{
+			$('.popover').popover('hide');
+			$('.nextTip').remove();
+		}
+	});
+}
+
+function scenario2(lastIndex){
+	$('body').append('<button class="float nextTip" style="right:50%;">=></button>')
+	var arrayId = ['#name2', '#lastName2', '#email2', '#numero2', '#message3'];
+	var finish = arrayId.length-1;
+
+	console.log(lastIndex);
+
+	popoverFocus(arrayId[lastIndex]);
+	$('.nextTip').click(function(event){
+		event.stopPropagation();
+		lastIndex++;
+		if($('.nextTip').text() != "X"){
+			popoverFocus(arrayId[lastIndex]);
+			if(lastIndex == finish){
+				$('.nextTip').text("X");
+			}
+		}else{
+			$('.popover').popover('hide');
+			$('.nextTip').remove();
+			$('.counterAuto').text("5")
+		}
+	});
+}
+
+function popoverFocus(idFocus){
+	$('.popover').popover('hide');
+    $(idFocus).popover({ placement:'auto', trigger: 'click', title: 'Etape scénario : '+idFocus, content: "Une description qui guide l'utilisateur de manière précise." });
+    $(idFocus).click();
+	$(idFocus).popover('show');
+}
 
 function initPopup(){
 	var modal = document.getElementById('myModal');
 	modal.style.display = "block";
 
 
-    var span = document.getElementsByClassName("closeModal")[0];
-    span.addEventListener("click", function() {
+    $('.closeModal').click(function() {
         console.log("close");
         modal.style.display = "none";
     });
-
-    var aElement = span.getElementsByTagName("a");
-    for (var i = 0; i < aElement.length; i++) {
-        aElement[i].addEventListener("click", function() {
-            console.log("close");
-            modal.style.display = "none";
-        });
-    }
+    $('.closeModal2').click(function() {
+        console.log("close");
+        modal.style.display = "none";
+    });
 }
 
 function createTooltips() {
@@ -96,17 +167,17 @@ function createTooltips() {
         }
 	}
 
-	$.post("http://127.0.0.1:8888/index.php",
-    {
-        request: "getTooltips",
-        url: "http://127.0.0.1/index.html"
-    },
-    function(json, status){
-		$.each(JSON.parse(json), function(idx, obj) {
-			console.log('#'+obj.baliseTooltip, obj.titreTooltip, obj.descriptionTooltip);
-			$('#'+obj.baliseTooltip).popover({ placement:'auto', trigger: 'click', title: obj.titreTooltip, content: obj.descriptionTooltip });
-		});
-    });
+	// $.post("http://127.0.0.1:8888/index.php",
+ //    {
+ //        request: "getTooltips",
+ //        url: "http://127.0.0.1/index.html"
+ //    },
+ //    function(json, status){
+	// 	$.each(JSON.parse(json), function(idx, obj) {
+	// 		console.log('#'+obj.baliseTooltip, obj.titreTooltip, obj.descriptionTooltip);
+	// 		$('#'+obj.baliseTooltip).popover({ placement:'auto', trigger: 'click', title: obj.titreTooltip, content: obj.descriptionTooltip });
+	// 	});
+ //    });
 }
 
 function createBarChart() {
